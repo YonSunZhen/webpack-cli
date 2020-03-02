@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="viewport" content="width=750,user-scalable=no">
+  <meta name="format-detection" content="telephone=no"/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- <meta name="x5-fullscreen" content="true">-->
+  <meta name="x5-orientation" content="portrait">
+  <!--<meta name="full-screen" content="yes">-->
+  <meta name="screen-orientation" content="portrait">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+  <link type="text/css" rel="stylesheet" href="./css/common.css">
+  <link type="text/css" rel="stylesheet" href="./css/picture.css">
+  <link type="text/css" rel="stylesheet" href="./css/swiper.min.css">
+  <link type="text/css" rel="stylesheet" href="./layui/css/layui.css">
+  <script src="./dist/vconsole.min.js"></script>
+  <title>新年相册</title>
+</head>
+<body>
+  <!-- <input type="file" id="inputImg">
+  <canvas id="myCanvas"></canvas>
+  <a href="http://qiniu.yonsunzhen.cn/markdown/img/%E6%99%AF%E8%89%B2.png" id="a">haha</a>
+  <img src="http://qiniu.yonsunzhen.cn/markdown/img/%E6%99%AF%E8%89%B2.png" alt=""> -->
+  <div class="main">
+    <div class="picture">
+      <canvas id="myCanvas"></canvas>
+      <canvas id="_myCanvas"></canvas>
+      <img id="myPicture" src="./img/1.png" alt="">
+    </div>
+    <div class="shade">
+      <div class="add">
+        <input id="file" type="file" accept = "image/*">
+      </div>
+      <div class="up"></div>
+      <div class="frame">
+        <div class="swiper-container">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <img class="imgFrame" src="./img/1.png" alt="">
+            </div>
+            <div class="swiper-slide">
+              <img class="imgFrame" src="./img/2.png" alt="">
+            </div>
+            <div class="swiper-slide">
+              <img class="imgFrame" src="./img/3.png" alt="">
+            </div>
+            <div class="swiper-slide">
+              <img class="imgFrame" src="./img/4.png" alt="">
+            </div>
+            <div class="swiper-slide">
+              <img class="imgFrame" src="./img/5.png" alt="">
+            </div>
+            <div class="swiper-slide">
+              <img class="imgFrame" src="./img/6.png" alt="">
+            </div>
+            <div class="swiper-slide">
+              <img class="imgFrame" src="./img/7.png" alt="">
+            </div>
+            <div class="swiper-slide">
+              <img class="imgFrame" src="./img/8.png" alt="">
+            </div>
+            <div class="swiper-slide">
+              <img class="imgFrame" src="./img/9.png" alt="">
+            </div>
+            <div class="swiper-slide">
+              <img class="imgFrame" src="./img/10.png" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="down"></div>
+    </div>
+    <!-- <div class="btn">
+      <button id="btn" class="begin layui-btn layui-btn-radius">保存图片</button>
+    </div> -->
+  </div>
+  <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+  <script src="./js/swiper.min.js"></script>
+  <script src="./layui/layui.js"></script>
+  <script>
+    // 网页可见区域宽
+    // console.log(document.body.clientWidth);
+    // console.log(document.body.clientHeight);
+    // // console.log(window.screen.availHeight);
+    // // 屏幕分辨率的宽
+    // console.log(window.screen.width);
+    // console.log(window.screen.height);
+    const hasTouch = 'ontouchstart' in window;
+    // 初始化vConsole
+    let vConsole = new VConsole({
+        defaultPlugins: ['system', 'network', 'element', 'storage'], // 可以在此设定要默认加载的面板
+        maxLogNumber: 1000,
+        // disableLogScrolling: true,
+        onReady: function() {
+            console.log('vConsole is ready.');
+        },
+        onClearLog: function() {
+            console.log('on clearLog');
+        }
+    });
+    // 不包括导航栏
+    const clientWidth = document.body.clientWidth;
+    const clientHeight = document.body.clientHeight;
+    const _clientHeight = 0.75 * clientHeight;
+    let canvas = document.querySelector('#myCanvas');
+    let ctx = canvas.getContext('2d');
+    // 用来暂时存储img的canvas
+    let _canvas = document.querySelector('#_myCanvas');
+    let _ctx = _canvas.getContext('2d');
+    // 默认指向第一个相框
+    let currentFrameSrc = "./img/1.png";
+    // 个人图片数据
+    let pictureData;
+    // 已加载的图片数据
+    let pictureObj;
+    // 是否选择图片(点击了add按钮)
+    let isAdded = false;
+    let isMoving = false;
+    let starts = []; // 缩放时使用
+    canvas.width = clientWidth;
+    canvas.height = _clientHeight;
+    _canvas.width = clientWidth;
+    _canvas.height = _clientHeight;
+    let startX = 0;
+    let startY = 0;
+    let endX = 0;
+    let endY = 0;
+    let moveX = 0;
+    let moveY = 0;
+    let timeOutEvent = 0;
+    let scaleStart = 0;
+    let scaleEnd = 0;
+    let isScaleing = false;
+    // 轮播图
+    const mySwiper = new Swiper ('.swiper-container', {
+      slidesPerView: 5,
+      spaceBetween: 35,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+    })
+    // 点击保存图片事件
+    // $("#btn").on("click",function(event) {
+    //   event.preventDefault();
+    //   achieveImage(currentFrameSrc);
+    // })
+    // 点击切换相框事件
+    $(".swiper-wrapper").on("click", function(event) {
+      const targetName = event.target.className;
+      if(targetName === 'imgFrame') {
+        showMyPicture();
+        const imgUrl = "./img" + event.target.src.split('/img')[1];
+        currentFrameSrc = imgUrl;
+        $("#myPicture").attr("src",imgUrl);
+        achieveImage(currentFrameSrc);
+      }
+    }) 
+    // 点击选择图片事件
+    $("#file").on('touchstart',function () {
+        const inputObj = $("#file").get(0);
+        inputObj.addEventListener('change',readFile,false);
+    });
+    function readFile() {
+      const file = this.files[0];//获取input输入的图片
+      const reader = new FileReader();
+      reader.readAsDataURL(file);//转化成base64数据类型
+      reader.onload = function(e) {
+        if(!isAdded) {
+          bindMovePictureEvent();
+          isAdded = true;
+        }
+        pictureData = this.result;       
+        drawImage();
+      }
+    }
+
+    function achieveImage(currentFrameSrc) {
+      const frameImg = new Image;
+      frameImg.src = currentFrameSrc;
+      frameImg.onload = function() {
+        _canvas.width = clientWidth;
+        _canvas.height = _clientHeight;
+        $("#_myCanvas").css("display", "inline");
+        _ctx.drawImage(canvas,0,0,clientWidth, _clientHeight);
+        _ctx.drawImage(frameImg,0,0,clientWidth, _clientHeight);
+        clearMyPicture();
+        const strDataURI = _canvas.toDataURL("image/png");//获取canvas base64数据
+        $("#_myCanvas").css("display", "none");
+        showMyPicture(strDataURI);
+      }
+    }
+    // 刚选择图片时使用
+    function drawImage() {
+      // showMyPicture(currentFrameSrc);
+      const pictureImg = new Image;
+      if(pictureData) {
+        // 清除画布内容
+        canvas.width = clientWidth;
+        canvas.height = _clientHeight;
+        pictureImg.src = pictureData;
+        pictureImg.onload = function() {
+          pictureObj = pictureImg;
+          // this指向img本身
+          const imgWidth = this.width;
+          const imgHeight = this.height;
+          const scale = clientWidth/imgWidth;
+          ctx.translate(canvas.width/2, canvas.height/2);
+          // 图片 宽度撑满 高度自适应
+          ctx.drawImage(pictureImg,-canvas.width/2,-canvas.height/2, clientWidth, this.height*scale);
+          showMyPicture(currentFrameSrc);
+          achieveImage(currentFrameSrc);
+        }
+      }
+    }
+    // 显示绝对定位图片
+    function showMyPicture(imgSrc) {
+      $("#myPicture").css("visibility", "visible");
+      if(imgSrc) {
+        // 将合成的图片赋值给绝对定位图片
+        $("#myPicture").attr("src",imgSrc);
+      }
+    }
+    // 隐藏绝对定位图片
+    function clearMyPicture() {
+      $("#myPicture").css("visibility", "hidden");
+    }
+    // 将canvas数据转化为img base64数据
+    function canvasToImg(canvasData) {
+      const image = new Image();
+      image.src = _canvas.toDataURL("image/png");
+      $("#_myCanvas").css("display", "none");
+      return image.src;
+    }
+
+    // 绑定移动图片事件
+    function bindMovePictureEvent() {
+      $(".picture").on("touchstart", function(event) {
+        // event.preventDefault();
+        startX = event.originalEvent.targetTouches[0].pageX;
+        startY = event.originalEvent.targetTouches[0].pageY;
+        timeOutEvent = setTimeout(() => {
+          isMoving = true;
+          timeOutEvent = 0;
+          console.log("长按了1");
+          achieveImage(currentFrameSrc);
+        },400);
+        setTimeout(() => {
+          if(!isMoving) {
+            console.log("点击了2");
+            // 每次改变图片时执行 清除图片改为相框
+            showMyPicture(currentFrameSrc);
+          }
+        }, 450)
+        if(event.originalEvent.targetTouches.length >= 2) {
+          isScaleing = true;
+          starts = event.originalEvent.targetTouches;
+          const startsPageX1 = starts[0].pageX;
+          const startsPageY1 = starts[0].pageY;
+          const startsPageX2 = starts[1].pageX;
+          const startsPageY2 = starts[1].pageY;
+          scaleStart = Math.sqrt(Math.pow(startsPageX1-startsPageX2,2) + Math.pow(startsPageY1-startsPageY2,2));
+        }
+      })
+      $(".picture").on("touchmove", function(event) {
+        // event.preventDefault();
+        endX = event.originalEvent.targetTouches[0].pageX;
+        endY = event.originalEvent.targetTouches[0].pageY;
+        moveX = endX - startX;
+        moveY = endY - startY;
+        const touch = event.originalEvent.targetTouches;
+        // 真坑
+        if(moveX !== 0 || moveY !== 0 || touch.length > 1) {
+          clearTimeout(timeOutEvent);
+          timeOutEvent = 0;  
+          showMyPicture(currentFrameSrc);
+          if(touch.length === 1) {
+            ctx.translate(moveX, moveY);
+            onDraw();
+            startX = endX;
+            startY = endY;
+            console.log('移动');
+          }  
+          if(touch.length === 2) {
+            console.log('缩放');
+            console.log(touch[0].pageX);
+            let scale = 1;
+            const touchPageX1 = touch[0].pageX;
+            const touchPageY1 = touch[0].pageY;
+            const touchPageX2 = touch[1].pageX;
+            const touchPageY2 = touch[1].pageY;
+            // 获取两点之间的距离
+            scaleEnd = Math.sqrt(Math.pow(touchPageX1-touchPageX2,2) + Math.pow(touchPageY1-touchPageY2,2));
+            const distance = scaleEnd - scaleStart;
+            // 放大
+            if(distance > 0){
+              scale = 1.05;
+            } 
+            if(distance < 0) {
+              scale = 0.95;
+            }
+            if(scaleEnd === scaleStart) {
+              scale = 1;
+            }
+            ctx.scale(scale, scale);
+            onDraw();
+            scaleStart = scaleEnd;
+          }
+
+        }
+      })
+      $(".picture").on("touchend", function(event) {
+        isMoving = false;
+        isScaleing = false;
+        clearTimeout(timeOutEvent); 
+        timeOutEvent = 0;
+        // 生成绝对定位图片
+        // console.log('debug3');
+      })
+    }
+
+    function onDraw() {
+      const imgWidth = pictureObj.width;
+      const imgHeight = pictureObj.height;    
+      const scale = clientWidth/imgWidth;
+      // 乘以2表示最大的情况 当图片被全部移除界面时
+      ctx.clearRect(-canvas.width,-canvas.height,canvas.width*4,canvas.height*4)
+      ctx.drawImage(pictureObj,-canvas.width/2,-canvas.height/2,clientWidth, imgHeight*scale);
+      achieveImage(currentFrameSrc);
+    }
+
+    function longPress() {
+      isMoving = true;
+      timeOutEvent = 0;
+      console.log("长按了");
+    }
+  </script>
+</body>
+</html>

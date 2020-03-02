@@ -1,0 +1,48 @@
+.main {
+  width: 100%;
+  height: 100%;
+  background: url(../img/default.jpg) no-repeat;
+}
+.test {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 5;
+}
+.btn {
+  width: 40%;
+  margin-left: auto;
+  margin-right: auto;
+  /* margin-top: 10rem; */
+}
+.begin{
+  width: 100%;
+  height: 5rem !important;
+  font-size: 2rem !important;
+}
+.gif{
+  /* margin-top: 20%; */
+  /* padding-top: 20%; */
+  width: 100%;
+  height: 100%;
+  margin:0 auto; 
+  background: url(../img/欢迎页1_1.gif) no-repeat left 0 top -12rem;
+  /* background-image:url(../img/欢迎页1_1.gif);
+  background-repeat:no-repeat;  
+  background-position: top 10px; */
+  /* margin-top: 1rem; */
+}
+.imgGif {
+  width: 750px;
+  height: 820px;;
+}
+.word {
+  padding-top: 3rem;
+  width: 382px;
+  height: 64px;
+  margin:0 auto; 
+}
+.ziti {
+  width: 382px;
+  height: 64px;
+}

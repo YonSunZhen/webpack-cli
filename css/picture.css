@@ -1,0 +1,98 @@
+.main {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  /* background: url(../img/排行榜.png) no-repeat; */
+}
+.picture {
+  width: 100%;
+  height: 100%;
+}
+#myCanvas {
+  /* width: 100%;
+  height: 50%; */
+}
+#_myCanvas {
+  display: none;
+}
+#myPicture {
+  position: absolute;
+  top: 0;
+  left:0;
+  width: 100%;
+  height: 75%;
+  /* height: auto;
+  min-height: 70%; */
+  z-index: 10;
+}
+.shade{
+  position: absolute;
+  width: 100%;
+  height: 20%;
+  bottom: 0;
+  background-color:white;
+  z-index: 20;
+}
+.add{
+  width: 8rem;
+  height: 8rem;
+  background-color:white;
+  margin-left:auto;
+  margin-right: auto;
+  margin-top: -5rem;
+  border-radius: 100%;
+  border: 1rem solid red;
+}
+#file {
+  width: 8rem;
+  height: 8rem;
+  opacity: 0;
+}
+.frame {
+  width: 100%;
+  height: 54%;
+  /* background-color: aquamarine; */
+}
+.up {
+  width: 100%;
+  height: 4%;
+  /* background-color: blue; */
+}
+.down {
+  width: 100%;
+  height: 17%;
+  /* background-color:red; */
+}
+.swiper-container {
+  width: 100%;
+  height: 100%;
+}
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+
+  /* Center slide text vertically */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.imgFrame {
+  width: 100%;
+  height: 100%;
+}
+.btn {
+  position: absolute;
+  z-index: 50;
+  top: 1rem;
+  right: 1rem;
+}
