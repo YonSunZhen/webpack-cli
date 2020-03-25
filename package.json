@@ -24,6 +24,8 @@
     "css-loader": "^3.4.2",
     "html-webpack-plugin": "^4.0.1",
     "ts-loader": "^6.2.1",
+    "tslint": "^6.1.0",
+    "tslint-language-service-ts3": "^1.0.0",
     "typescript": "^3.8.3",
     "webpack": "^4.41.6",
     "webpack-cli": "^3.3.11",
