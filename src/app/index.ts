@@ -3,5 +3,5 @@ function index(a, b): number {
 }
 const test_index = index(1, 2);
 console.log(test_index);
-const a = "1";
+const a = '1';
 
