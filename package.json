@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/YonSunZhen/webpack_cli#readme",
   "devDependencies": {
+    "@types/jquery": "^3.3.38",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "@typescript-eslint/parser": "^2.25.0",
     "clean-webpack-plugin": "^3.0.0",
@@ -33,5 +34,8 @@
     "webpack-dev-server": "^3.10.3",
     "webpack-merge": "^4.2.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "jquery": "^3.5.1",
+    "xlsx": "^0.16.0"
+  }
 }
